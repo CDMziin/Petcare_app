@@ -67,6 +67,7 @@ flutter:
     - assets/breeds/pug.jpg
     - assets/breeds/mainecoon.jpg
     - assets/breeds/pastoralemao.jpg
+    - assets/tips/tips.json
     
 
   # To add assets to your application, add an assets section, like this:
