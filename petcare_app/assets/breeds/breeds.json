@@ -1,0 +1,42 @@
+[
+  {
+    "name": "Golden Retriever",
+    "image": "assets/breeds/golden.jpg",
+    "description": "O Golden Retriever é conhecido por ser amigável, inteligente e confiável. Ótimo para famílias e excelente com crianças.",
+    "tips": [
+      "Precisa de exercícios diários e atividades mentais.",
+      "Escove os pelos semanalmente para evitar nós.",
+      "Alimente com ração de qualidade e evite sobrepeso."
+    ],
+    "curiosities": [
+      "É uma das raças mais populares do mundo.",
+      "Adora nadar e brincar na água."
+    ]
+  },
+  {
+    "name": "Siamês",
+    "image": "assets/breeds/siames.jpg",
+    "description": "O Siamês é um gato extrovertido, comunicativo e muito leal ao tutor. Conhecido pelo miado marcante e olhos azuis intensos.",
+    "tips": [
+      "Prefere companhia e pode sofrer se ficar muito tempo sozinho.",
+      "Cuidado com alimentação, pois pode ganhar peso fácil."
+    ],
+    "curiosities": [
+      "Originário da Tailândia (antigo Sião).",
+      "Seu pelo muda de cor conforme a temperatura do ambiente."
+    ]
+  },
+  {
+    "name": "Pug",
+    "image": "assets/breeds/pug.jpg",
+    "description": "O Pug é carinhoso, sociável e ótimo para quem mora em apartamento. Seu focinho curto requer atenção extra para respiração.",
+    "tips": [
+      "Evite exercícios em horários quentes.",
+      "Limpe as dobrinhas do rosto para evitar infecções."
+    ],
+    "curiosities": [
+      "Muito usado como cão de companhia na China imperial.",
+      "Ronca e faz barulhos engraçados ao dormir."
+    ]
+  }
+]
