@@ -1,18 +1,18 @@
 [
   {
     "id": 1,
-    "title": "Como introduzir um novo pet em casa",
-    "image": "assets/tips/new_pet.jpg",
-    "category": "Comportamento",
-    "summary": "Dicas para ajudar na adaptação de um novo animalzinho no lar.",
-    "content": "A introdução de um novo pet deve ser feita com calma. Mantenha o novo animal separado nos primeiros dias, apresente gradualmente, recompense comportamentos tranquilos e supervisione encontros até todos se acostumarem."
+    "title": "Como dar banho em cães",
+    "image": "assets/tips/banho.jpg",
+    "category": "Higiene",
+    "summary": "Dicas para banho seguro e saudável.",
+    "content": "Use água morna, evite sabão de gente e seque bem após o banho."
   },
   {
     "id": 2,
-    "title": "Vacinas obrigatórias para cães e gatos",
-    "image": "assets/tips/vacinas.jpg",
+    "title": "Vacinação obrigatória",
+    "image": "assets/tips/vacina.jpg",
     "category": "Saúde",
-    "summary": "Saiba quais vacinas seu pet precisa e em quais fases da vida.",
-    "content": "Vacinas são essenciais para a saúde dos pets. Para cães: V8/V10, antirrábica e giárdia. Para gatos: V4 ou V5 e antirrábica. Consulte sempre o veterinário para manter o calendário em dia."
+    "summary": "Seu pet protegido o ano inteiro.",
+    "content": "Leve ao veterinário para manter o calendário de vacinas em dia!"
   }
 ]

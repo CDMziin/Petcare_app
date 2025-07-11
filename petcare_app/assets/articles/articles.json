@@ -1,0 +1,18 @@
+[
+  {
+    "id": 1,
+    "title": "Cães e gatos podem ser amigos?",
+    "image": "assets/articles/amigos.jpg",
+    "category": "Curiosidades",
+    "summary": "Descubra como estimular a amizade entre espécies.",
+    "content": "Com adaptação correta, cães e gatos podem conviver em harmonia."
+  },
+  {
+    "id": 2,
+    "title": "Adoção responsável",
+    "image": "assets/articles/adocao.jpg",
+    "category": "Consciência",
+    "summary": "Entenda a importância da adoção consciente.",
+    "content": "Adotar é um ato de amor! Conheça histórias inspiradoras de adoção."
+  }
+]
