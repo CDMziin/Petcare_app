@@ -1,156 +1,144 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import '../models/pet_model.dart';
 
 class AddEditPetScreen extends StatefulWidget {
   final PetModel? pet;
   final Function(PetModel) onSave;
-
-  const AddEditPetScreen({this.pet, required this.onSave});
-
+  AddEditPetScreen({this.pet, required this.onSave});
   @override
-  State<AddEditPetScreen> createState() => _AddEditPetScreenState();
+  _AddEditPetScreenState createState() => _AddEditPetScreenState();
 }
 
 class _AddEditPetScreenState extends State<AddEditPetScreen> {
   final _formKey = GlobalKey<FormState>();
-  File? _pickedImage;
-  late TextEditingController _nameController;
-  late TextEditingController _descController;
-  DateTime? _birthDate;
-  late TextEditingController _breedController;
-  String? _size;
-  late TextEditingController _weightController;
+  late String _name;
+  late String _breed;
+  static const List<String> _breeds = ['Pug', 'Bulldog', 'Labrador', 'Vira-lata'];
+  late String _description;
+  late DateTime _birthDate;
+  late String _size;
+  late double _weight;
+  XFile? _pickedImage;
 
   @override
   void initState() {
     super.initState();
-    _nameController = TextEditingController(text: widget.pet?.name ?? '');
-    _descController = TextEditingController(text: widget.pet?.description ?? '');
-    _birthDate = widget.pet?.birthDate;
-    _breedController = TextEditingController(text: widget.pet?.breed ?? '');
-    _size = widget.pet?.size;
-    _weightController = TextEditingController(text: widget.pet?.weight != null ? widget.pet!.weight.toString() : '',);
-
-
-
+    _name = widget.pet?.name ?? '';
+    _breed = widget.pet?.breed ?? '';
+    _description = widget.pet?.description ?? '';
+    _birthDate = widget.pet?.birthDate ?? DateTime.now();
+    _size = widget.pet?.size ?? '';
+    _weight = widget.pet?.weight ?? 0.0;
   }
 
   Future<void> _pickImage() async {
-    final picker = ImagePicker();
-    final picked = await picker.pickImage(source: ImageSource.gallery);
-    if (picked != null) {
-      setState(() => _pickedImage = File(picked.path));
-    }
+    final img = await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (img != null) setState(() => _pickedImage = img);
   }
 
-  void _savePet() {
-    if (_formKey.currentState!.validate() && _birthDate != null) {
-      final newPet = PetModel(
-        id: widget.pet?.id ?? DateTime.now().millisecondsSinceEpoch.toString(),
-        name: _nameController.text.trim(),
-        description: _descController.text.trim(),
-        birthDate: _birthDate!,
-        breed: _breedController.text.trim(),
-        size: _size ?? '',
-        weight: double.tryParse(_weightController.text) ?? 0.0,
-        imageUrl: _pickedImage?.path ?? widget.pet?.imageUrl ?? 'assets/pets/avatar_default.png',
+  Future<void> _pickDate() async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _birthDate,
+      firstDate: DateTime(2000), lastDate: DateTime.now(),
+    );
+    if (picked != null) setState(() => _birthDate = picked);
+  }
+
+  void _submit() {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+      final imgPath = _pickedImage?.path ?? widget.pet?.imageUrl ?? '';
+      final pet = PetModel(
+        id: widget.pet?.id ?? UniqueKey().toString(),
+        name: _name,
+        breed: _breed,
+        imageUrl: imgPath,
+        description: _description,
+        birthDate: _birthDate,
+        size: _size,
+        weight: _weight,
       );
-      widget.onSave(newPet);
-      Navigator.of(context).pop();
+      widget.onSave(pet);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final dateStr = DateFormat('dd/MM/yyyy').format(_birthDate);
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.pet == null ? 'Adicionar Pet' : 'Editar Pet'),
-      ),
+      appBar: AppBar(title: Text(widget.pet == null ? 'Adicionar Pet' : 'Editar Pet')),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(20),
+        padding: EdgeInsets.all(16),
         child: Form(
           key: _formKey,
-          child: Column(
-            children: [
-              GestureDetector(
-                onTap: _pickImage,
-                child: CircleAvatar(
-                  radius: 56,
-                  backgroundImage: _pickedImage != null
-                      ? FileImage(_pickedImage!)
-                      : (widget.pet != null
-                          ? AssetImage(widget.pet!.imageUrl)
-                          : AssetImage('assets/pets/avatar_default.png')) as ImageProvider,
-                  child: Align(
-                    alignment: Alignment.bottomRight,
+          child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+            GestureDetector(
+              onTap: _pickImage,
+              child: Center(
+                child: Stack(alignment: Alignment.bottomRight, children: [
+                  CircleAvatar(
+                    radius: 50,
+                    backgroundImage: _pickedImage != null
+                        ? FileImage(File(_pickedImage!.path))
+                        : (widget.pet != null && widget.pet!.imageUrl.isNotEmpty
+                            ? AssetImage(widget.pet!.imageUrl)
+                            : null) as ImageProvider?,
+                    child: _pickedImage == null && (widget.pet?.imageUrl.isEmpty ?? true)
+                        ? Icon(Icons.pets, size: 40, color: Colors.grey)
+                        : null,
+                  ),
+                  Positioned(
+                    right: 0, bottom: 0,
                     child: CircleAvatar(
-                      radius: 17,
-                      backgroundColor: Colors.brown[200],
-                      child: Icon(Icons.edit, size: 20, color: Colors.brown[800]),
+                      radius: 14,
+                      backgroundColor: Colors.white,
+                      child: Icon(Icons.edit, size: 16),
                     ),
                   ),
-                ),
+                ]),
               ),
-              SizedBox(height: 16),
-              TextFormField(
-                controller: _nameController,
-                decoration: InputDecoration(labelText: 'Nome do Pet'),
-                validator: (value) => value == null || value.trim().isEmpty ? 'Nome obrigatório' : null,
-              ),
-              SizedBox(height: 12),
-              TextFormField(
-                controller: _descController,
-                decoration: InputDecoration(labelText: 'Descrição'),
-                maxLines: 2,
-              ),
-              SizedBox(height: 12),
-              ListTile(
-                title: Text(_birthDate == null
-                    ? 'Data de nascimento'
-                    : 'Nascimento: ${_birthDate!.day}/${_birthDate!.month}/${_birthDate!.year}'),
-                trailing: Icon(Icons.calendar_today),
-                onTap: () async {
-                  final picked = await showDatePicker(
-                    context: context,
-                    initialDate: _birthDate ?? DateTime(2020),
-                    firstDate: DateTime(2000),
-                    lastDate: DateTime.now(),
-                  );
-                  if (picked != null) setState(() => _birthDate = picked);
-                },
-              ),
-              SizedBox(height: 12),
-              TextFormField(
-                controller: _breedController,
-                decoration: InputDecoration(labelText: 'Raça'),
-              ),
-              SizedBox(height: 12),
-              DropdownButtonFormField<String>(
-                value: _size,
-                decoration: InputDecoration(labelText: 'Porte'),
-                items: ['Pequeno', 'Médio', 'Grande']
-                    .map((sz) => DropdownMenuItem(value: sz, child: Text(sz)))
-                    .toList(),
-                onChanged: (val) => setState(() => _size = val),
-                validator: (val) => val == null || val.isEmpty ? 'Selecione o porte' : null,
-              ),
-              SizedBox(height: 12),
-              TextFormField(
-                controller: _weightController,
-                decoration: InputDecoration(labelText: 'Peso (kg)'),
-                keyboardType: TextInputType.numberWithOptions(decimal: true),
-                validator: (value) =>
-                    value == null || double.tryParse(value) == null ? 'Peso inválido' : null,
-              ),
-              SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: _savePet,
-                child: Text(widget.pet == null ? 'Adicionar' : 'Salvar alterações'),
-              ),
-            ],
-          ),
+            ),
+            SizedBox(height: 16),
+            TextFormField(
+              initialValue: _name,
+              decoration: InputDecoration(labelText: 'Nome'),
+              validator: (v) => v!.isEmpty ? 'Digite o nome' : null,
+              onSaved: (v) => _name = v!,
+            ),
+            DropdownButtonFormField<String>(
+              value: _breed.isNotEmpty ? _breed : null,
+              decoration: InputDecoration(labelText: 'Raça'),
+              items: _breeds.map((b) => DropdownMenuItem(value: b, child: Text(b))).toList(),
+              onChanged: (v) => setState(() => _breed = v!),
+              validator: (v) => v == null || v.isEmpty ? 'Selecione a raça' : null,
+            ),
+            TextFormField(
+              initialValue: _description,
+              decoration: InputDecoration(labelText: 'Descrição'),
+              maxLines: 3,
+              onSaved: (v) => _description = v!,
+            ),
+            SizedBox(height: 12),
+            Row(children: [Expanded(child: Text('Nascido em: $dateStr')), TextButton(onPressed: _pickDate, child: Text('Selecionar'))]),
+            TextFormField(
+              initialValue: _size,
+              decoration: InputDecoration(labelText: 'Porte'),
+              onSaved: (v) => _size = v!,
+            ),
+            TextFormField(
+              initialValue: _weight.toString(),
+              decoration: InputDecoration(labelText: 'Peso (kg)'),
+              keyboardType: TextInputType.numberWithOptions(decimal: true),
+              validator: (v) => (v == null || double.tryParse(v) == null) ? 'Peso inválido' : null,
+              onSaved: (v) => _weight = double.parse(v!),
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(onPressed: _submit, child: Text('Salvar')),
+          ]),
         ),
       ),
     );
