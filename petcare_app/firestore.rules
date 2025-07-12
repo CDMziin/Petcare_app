@@ -1,0 +1,35 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // → Coleção de raças: leitura pública, escrita só por usuários autenticados
+    match /breeds/{breedId} {
+      allow read:  if true;
+      allow write: if request.auth != null;
+    }
+
+    // → Coleção de notícias: leitura pública, escrita só por admins (claim custom “admin”)
+    match /news/{newsId} {
+      allow read:  if true;
+      allow write: if request.auth != null
+                   && request.auth.token.admin == true;
+    }
+
+    // → Coleção de cuidados: leitura pública, escrita só por usuários autenticados
+    match /care/{careId} {
+      allow read:  if true;
+      allow write: if request.auth != null;
+    }
+
+    // → Exemplo de coleções de lembretes por usuário (se usar auth)
+    match /users/{userId}/reminders/{reminderId} {
+      allow read, write: if request.auth != null
+                        && request.auth.uid == userId;
+    }
+
+    // → Nega tudo o mais
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
