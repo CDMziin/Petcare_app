@@ -1,27 +1,35 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import '../services/data_service.dart';
+import '../models/news.dart';
+import 'news_detail_screen.dart';
 
 class NewsScreen extends StatelessWidget {
+  final _service = DataService();
+
   @override
   Widget build(BuildContext context) {
-    final news = [
-      {'title': 'Saúde do pet', 'date': DateTime.now().subtract(Duration(days: 1))},
-      {'title': 'Alimentação balanceada', 'date': DateTime.now().subtract(Duration(days: 2))},
-      {'title': 'Adote um amigo', 'date': DateTime.now().subtract(Duration(days: 3))},
-    ];
-    return Scaffold(
-      appBar: AppBar(title: Text('Notícias')),
-      body: Padding(
-        padding: EdgeInsets.all(16),
-        child: ListView(
-          children: news.map((item) => Card(
-            child: ListTile(
-              title: Text(item['title'] as String),
-              subtitle: Text(DateFormat('dd/MM/yyyy').format(item['date'] as DateTime)),
-            ),
-          )).toList(),
-        ),
-      ),
+    return StreamBuilder<List<News>>(
+      stream: _service.streamNews(),
+      builder: (ctx, snap) {
+        if (!snap.hasData) return const Center(child: CircularProgressIndicator());
+        final list = snap.data!;
+        return ListView.builder(
+          itemCount: list.length,
+          itemBuilder: (_, i) {
+            final news = list[i];
+            return ListTile(
+              leading: const Icon(Icons.article, size: 36),
+              title: Text(news.title, style: Theme.of(context).textTheme.titleLarge),
+              subtitle: Text(news.description, maxLines: 2, overflow: TextOverflow.ellipsis),
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(
+                  builder: (_) => NewsDetailScreen(news: news),
+                ));
+              },
+            );
+          },
+        );
+      },
     );
   }
 }
